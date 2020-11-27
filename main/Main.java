@@ -1,12 +1,15 @@
 package main;
 
 import application.Action;
+import application.Rating;
+import application.Serial;
 import application.User;
 import checker.Checkstyle;
 import checker.Checker;
 import command.FavViewRating;
 import common.Constants;
 import fileio.*;
+import lists.Lists;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +29,7 @@ import fileio.Writer;
 
 
 /**
- * The entry point to this homework. It runs the checker that tests your implentation.
+ * The entry point to this homework. It runs the checker that tests your implementation.
  */
 public final class Main {
     /**
@@ -87,28 +91,29 @@ public final class Main {
         List<UserInputData> users = input.getUsers();
         List<ActionInputData> actions = input.getCommands();
         List<SerialInputData> serial = input.getSerials();
+        List<User> userList = new ArrayList<>();
+        List<Serial> serialList = new ArrayList<>();
+        List<Rating> ratingList = new ArrayList<>();
+        Lists l =  new Lists(userList, serialList, ratingList);
+
         String message;
         int find;
 
         for (ActionInputData action : actions) {
             if (action.getActionType().equals("command")) {
-            for (int i = 0; i < users.size(); i++)
-                if (users.get(i).getUsername().equals(action.getUsername())) {
-                    find = i;
-                    Action a = new Action(action);
-                    User u = new User(users.get(find));
-                    FavViewRating f = new FavViewRating(a, u);
-                    message = f.Commands(u, a);
-                    JSONObject object = fileWriter.writeFile(action.getActionId(),
+                Action a = new Action(action);
+                find = 0;
+                while (!users.get(find).getUsername().equals(action.getUsername())) {
+                    find++;
+                }
+                User u = new User(users.get(find));
+                FavViewRating f = new FavViewRating(a, u, l);
+                message = f.Commands(u, a);
+                JSONObject object = fileWriter.writeFile(action.getActionId(),
                             "", message);
-                    arrayResult.add(object);
+                arrayResult.add(object);
                 }
             }
-        }
         fileWriter.closeJSON(arrayResult);
-
-        for (int i = 0; i < serial.size(); i++) {
-            System.out.println(serial.get(i));
-        }
     }
 }

@@ -57,5 +57,6 @@ public final class Season {
                 + duration
                 + '}';
     }
+
 }
 

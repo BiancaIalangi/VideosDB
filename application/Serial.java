@@ -1,12 +1,17 @@
 package application;
 
 import entertainment.Season;
+import fileio.ActionInputData;
+import fileio.Input;
 import fileio.SerialInputData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 public class Serial {
+    private String title;
+
     private int numberOfSeasons;
 
     private ArrayList<Season> seasons;
@@ -15,19 +20,73 @@ public class Serial {
 
     private int duration;
 
-    private HashMap<Integer, Double> ratings;
+    public double [] seasonsRatings;
 
-    public Serial(Season season, SerialInputData serialInputData) {
+    public Serial(SerialInputData serialInputData) {
+        this.title = serialInputData.getTitle();
         this.numberOfSeasons =  serialInputData.getNumberSeason();
         this.seasons = serialInputData.getSeasons();
-        this.currentSeason = season.getCurrentSeason();
-        this.duration = season.getDuration();
-        for (int i = 0; i < serialInputData.getNumberSeason(); i++) {
-            if (season.getRatings().get(i) == null) {
-                this.ratings.put(season.getCurrentSeason(), 0.0);
-            }
-            this.ratings.put(season.getCurrentSeason(), season.getRatings().get(i));
-        }
+        this.seasonsRatings = new double[this.numberOfSeasons];
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getNumberOfSeasons() {
+        return numberOfSeasons;
+    }
+
+    public void setNumberOfSeasons(int numberOfSeasons) {
+        this.numberOfSeasons = numberOfSeasons;
+    }
+
+    public ArrayList<Season> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(ArrayList<Season> seasons) {
+        this.seasons = seasons;
+    }
+
+    public int getCurrentSeason() {
+        return currentSeason;
+    }
+
+    public void setCurrentSeason(int currentSeason) {
+        this.currentSeason = currentSeason;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public double[] getSeasonsRatings() {
+        return seasonsRatings;
+    }
+
+    public void setSeasonsRatings(double[] seasonsRatings) {
+        this.seasonsRatings = seasonsRatings;
+    }
+
+    public void rateSeason(double rating, int i) {
+        this.seasonsRatings[i-1] = rating;
+    }
+
+    @Override
+    public String toString() {
+        return "Serial{" +
+                "title='" + title + '\'' +
+                ", numberOfSeasons=" + numberOfSeasons +
+                ", seasonsRatings=" + Arrays.toString(seasonsRatings) +
+                '}';
+    }
 }

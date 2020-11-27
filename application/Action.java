@@ -1,6 +1,8 @@
 package application;
 
 import fileio.ActionInputData;
+import fileio.SerialInputData;
+import fileio.UserInputData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,14 @@ public class Action {
         this.grade = action.getGrade();
         this.seasonNumber = action.getSeasonNumber();
         this.filters = action.getFilters();
+    }
+
+    public int findUser(List<UserInputData> action) {
+        for (int i = 0; i < action.size(); i++) {
+            if (this.getUsername().equals(action.get(i).getUsername()))
+                return i;
+        }
+        return 0;
     }
 
     public String getActionType() {

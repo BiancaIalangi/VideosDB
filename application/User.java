@@ -15,6 +15,11 @@ public class User {
 
     private ArrayList<String> favoriteMovies;
 
+    private ArrayList<String> ratedVideo = new ArrayList<>();
+
+    //private ArrayList<Serial> ratedSerials = new ArrayList<>();
+
+
     public User(UserInputData user) {
         this.username = user.getUsername();
         this.subscriptionType = user.getSubscriptionType();
@@ -27,7 +32,6 @@ public class User {
         this.history = history;
         this.favoriteMovies = favoriteMovies;
     }
-
 
     public String getUsername() {
         return username;
@@ -61,4 +65,33 @@ public class User {
         this.favoriteMovies = favoriteMovies;
     }
 
+    public int addReviewMovie(String title) {
+        if (!this.ratedVideo.contains(title)) {
+            this.ratedVideo.add(title);
+            return 1;
+        } else return -1;
+    }
+
+    public int addReviewSerial(String title, int season, double[] v, double grade) {
+        double [] aux = v.clone();
+        if (!this.ratedVideo.contains(title)) {
+            this.ratedVideo.add(title);
+            return 1;
+        } else {
+            if (aux[season - 1] == 0) {
+                return 1;
+            } else return -1;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", subscriptionType='" + subscriptionType + '\'' +
+                ", history=" + history +
+                ", favoriteMovies=" + favoriteMovies +
+                ", ratedVideo=" + ratedVideo +
+                '}';
+    }
 }
