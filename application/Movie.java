@@ -3,6 +3,7 @@ package application;
 import fileio.MovieInputData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Movie {
     private int duration;
@@ -15,12 +16,27 @@ public class Movie {
 
     private  ArrayList<String> genres;
 
+    private double generalRatingMovie;
+
+    private double sumRatingsMovie = 0;
+
+    private int divider;
+
+
     public Movie(MovieInputData movie) {
         this.duration = movie.getDuration();
         this.title = movie.getTitle();
         this.year = movie.getYear();
         this.cast = movie.getCast();
         this.genres = movie.getGenres();
+    }
+
+    public double getGeneralRatingMovie() {
+        return generalRatingMovie;
+    }
+
+    public void setGeneralRatingMovie(double generalRatingMovie) {
+        this.generalRatingMovie = generalRatingMovie;
     }
 
     public int getDuration() {
@@ -61,5 +77,50 @@ public class Movie {
 
     public void setGenres(ArrayList<String> genres) {
         this.genres = genres;
+    }
+
+    public double getSumRatingsMovie() {
+        return sumRatingsMovie;
+    }
+
+    public void setSumRatingsMovie(double sumRatingsMovie) {
+        this.sumRatingsMovie = sumRatingsMovie;
+    }
+
+    public int getDivider() {
+        return divider;
+    }
+
+    public void setDivider(int divider) {
+        this.divider = divider;
+    }
+
+    public void increaseDivider() {
+        this.divider++;
+    }
+
+    public void addRate(double d) {
+        this.sumRatingsMovie += d;
+    }
+
+    public void generalRating () {
+        if (this.divider == 0)
+            generalRatingMovie = 0;
+        else generalRatingMovie = sumRatingsMovie/divider;
+    }
+
+    public void sortCastAsc () {
+        Collections.sort(cast);
+    }
+
+    public void sortCastDesc () {
+        Collections.reverse(cast);
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "cast=" + cast +
+                '}';
     }
 }

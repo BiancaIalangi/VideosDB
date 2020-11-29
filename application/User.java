@@ -3,6 +3,7 @@ package application;
 import fileio.UserInputData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class User {
@@ -15,9 +16,13 @@ public class User {
 
     private ArrayList<String> favoriteMovies;
 
-    private ArrayList<String> ratedVideo = new ArrayList<>();
+    private Map<String, Double> ratedMovies = new HashMap<>();
 
-    //private ArrayList<Serial> ratedSerials = new ArrayList<>();
+    private Map<String, Double> ratedSerials = new HashMap<>();
+
+    private ArrayList<String> ratedShows = new ArrayList<>();
+
+    private HashMap<String, Integer> ratedSerial = new HashMap<>();
 
 
     public User(UserInputData user) {
@@ -27,15 +32,42 @@ public class User {
         this.favoriteMovies = user.getFavoriteMovies();
     }
 
-    public User(String username,Map<String, Integer> history, ArrayList<String> favoriteMovies) {
-        this.username = username;
-        this.history = history;
-        this.favoriteMovies = favoriteMovies;
-    }
-
     public String getUsername() {
         return username;
     }
+
+    public Map<String, Double> getRatedMovies() {
+        return ratedMovies;
+    }
+
+    public void setRatedMovies(Map<String, Double> ratedMovies) {
+        this.ratedMovies = ratedMovies;
+    }
+
+    public Map<String, Double> getRatedSerials() {
+        return ratedSerials;
+    }
+
+    public void setRatedSerials(Map<String, Double> ratedSerials) {
+        this.ratedSerials = ratedSerials;
+    }
+
+    public ArrayList<String> getRatedShows() {
+        return ratedShows;
+    }
+
+    public void setRatedShows(ArrayList<String> ratedShows) {
+        this.ratedShows = ratedShows;
+    }
+
+    public HashMap<String, Integer> getRatedSerial() {
+        return ratedSerial;
+    }
+
+    public void setRatedSerial(HashMap<String, Integer> ratedSerial) {
+        this.ratedSerial = ratedSerial;
+    }
+
 
     public void setUsername(String username) {
         this.username = username;
@@ -65,33 +97,41 @@ public class User {
         this.favoriteMovies = favoriteMovies;
     }
 
-    public int addReviewMovie(String title) {
-        if (!this.ratedVideo.contains(title)) {
-            this.ratedVideo.add(title);
-            return 1;
-        } else return -1;
+    public void addHasRatedMovie(String title) {
+
+        ratedShows.add(title);
     }
 
-    public int addReviewSerial(String title, int season, double[] v, double grade) {
-        double [] aux = v.clone();
-        if (!this.ratedVideo.contains(title)) {
-            this.ratedVideo.add(title);
-            return 1;
-        } else {
-            if (aux[season - 1] == 0) {
-                return 1;
-            } else return -1;
+    public void addRatedSerial(String title, int season) {
+        ratedSerial.put(title, season);
+    }
+
+    public int didRateShowS(String title, int nr) {
+        for (HashMap.Entry<String, Integer> entry: ratedSerial.entrySet()) {
+            String k = entry.getKey();
+            Integer v = entry.getValue();
+            if ((k.equals(title)) && (v == nr)) {
+                return 0;
+            }
         }
+        return 1;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", subscriptionType='" + subscriptionType + '\'' +
-                ", history=" + history +
-                ", favoriteMovies=" + favoriteMovies +
-                ", ratedVideo=" + ratedVideo +
-                '}';
+
+    public int didRateMovie(String title) {
+        for (String s : ratedShows) {
+            if (s.equals(title)) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    public int addFavoriteList(String title) {
+        for (String favoriteMovie : favoriteMovies) {
+            if (favoriteMovie.equals(title))
+                return 1;
+        }
+        return 0;
     }
 }

@@ -1,11 +1,9 @@
 package main;
 
-import application.Action;
-import application.Rating;
-import application.Serial;
-import application.User;
-import checker.Checkstyle;
+import application.Actor;
+import application.ActorsSortingComparator;
 import checker.Checker;
+import checker.Checkstyle;
 import command.FavViewRating;
 import common.Constants;
 import fileio.*;
@@ -19,13 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import fileio.ActionInputData;
-import fileio.Input;
-import fileio.InputLoader;
-import fileio.Writer;
 
 
 /**
@@ -91,29 +85,63 @@ public final class Main {
         List<UserInputData> users = input.getUsers();
         List<ActionInputData> actions = input.getCommands();
         List<SerialInputData> serial = input.getSerials();
-        List<User> userList = new ArrayList<>();
-        List<Serial> serialList = new ArrayList<>();
-        List<Rating> ratingList = new ArrayList<>();
-        Lists l =  new Lists(userList, serialList, ratingList);
+        List<MovieInputData> movies = input.getMovies();
+        Lists l = new Lists();
+        l.makeUsers(users);
+        l.makeMovies(movies);
+        l.makeSerial(serial);
 
-        String message;
-        int find;
+        StringBuilder message;
+
+
+//        for (Movie mvy : l.getMovieList()) {
+//            System.out.println("Movies: " + mvy.getRate());
+//        }
+//
+//        for (Serial sry : l.getSerialList()) {
+//            System.out.println("Serial: " + sry.getRatedSeasons());
+//        }
+//
+//        for (User usr : l.getUserList()) {
+//            System.out.println("User: " + usr.getRatedShows());
+//        }
+//
+//        for (Actor act : l.getActorList()) {
+//            System.out.println("Actors: " + act.getName());
+//        }
 
         for (ActionInputData action : actions) {
             if (action.getActionType().equals("command")) {
-                Action a = new Action(action);
-                find = 0;
-                while (!users.get(find).getUsername().equals(action.getUsername())) {
-                    find++;
-                }
-                User u = new User(users.get(find));
-                FavViewRating f = new FavViewRating(a, u, l);
-                message = f.Commands(u, a);
+                FavViewRating f = new FavViewRating(l);
+                message = new StringBuilder(f.Commands(action, l.getMovieList(), l.getSerialList()));
                 JSONObject object = fileWriter.writeFile(action.getActionId(),
-                            "", message);
+                        "", message.toString());
                 arrayResult.add(object);
-                }
             }
+            if (action.getActionType().equals("query")) {
+                if (action.getCriteria().equals("average")) {
+                    ArrayList<Actor> a;
+                    List<String> average;
+                    l.generalRatingAsc();           //ordonez alfabetic cast-ul
+                    a = l.ordRating();
+                    a.sort(new ActorsSortingComparator());
+                    if (action.getSortType().equals("desc")) {
+                        l.generalRatingDesc();          //reverse la castul ordonat alfabetic
+                        Collections.reverse(a);
+                    }
+                    average = l.actorsAverage(a, action.getNumber());
+                    message = new StringBuilder("Query result: [" + average.get(0));
+                    for (int i = 1; i < average.size(); i++) {
+                        message.append(", ").append(average.get(i));
+                    }
+                    message.append("]");
+                    JSONObject object = fileWriter.writeFile(action.getActionId(),
+                            "", message.toString());
+                    arrayResult.add(object);
+                }
+
+            }
+        }
         fileWriter.closeJSON(arrayResult);
     }
 }

@@ -1,7 +1,6 @@
 package application;
 
 import fileio.ActionInputData;
-import fileio.SerialInputData;
 import fileio.UserInputData;
 
 import java.util.ArrayList;
@@ -33,12 +32,6 @@ public class Action {
 
     private List<List<String>> filters = new ArrayList<>();
 
-    /*public Action (String actionType, String type, String username, String objectType, String sortType, String criteria,
-                   String title, String genre, int number, double grade, int seasonNumber, List<List<String>> filters) {
-        this.actionType = actionType;
-        this.type = type;
-        this
-    }*/
     public Action (String username) {
         this.username = username;
     }
