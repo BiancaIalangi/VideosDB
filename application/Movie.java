@@ -1,9 +1,13 @@
 package application;
 
+import entertainment.Genre;
 import fileio.MovieInputData;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import static utils.Utils.stringToGenre;
 
 public class Movie {
     private int duration;
@@ -22,6 +26,10 @@ public class Movie {
 
     private int divider;
 
+    private int timesInFavoriteMovies;
+
+    private int totalViews;
+
 
     public Movie(MovieInputData movie) {
         this.duration = movie.getDuration();
@@ -29,6 +37,14 @@ public class Movie {
         this.year = movie.getYear();
         this.cast = movie.getCast();
         this.genres = movie.getGenres();
+    }
+
+    public int getTimesInFavoriteMovies() {
+        return timesInFavoriteMovies;
+    }
+
+    public void increaseTimesInFavoriteMovies() {
+        timesInFavoriteMovies++;
     }
 
     public double getGeneralRatingMovie() {
@@ -96,7 +112,7 @@ public class Movie {
     }
 
     public void increaseDivider() {
-        this.divider++;
+        ++this.divider;
     }
 
     public void addRate(double d) {
@@ -109,6 +125,57 @@ public class Movie {
         else generalRatingMovie = sumRatingsMovie/divider;
     }
 
+    public int checkFiltersMovie (String yearFilter, Genre genreFilter) {
+        if (genres == null && genreFilter != null)
+            return 0;
+        if (genreFilter == null && yearFilter == null) {
+            return 1;
+        }
+
+        int yFilter;
+
+        if (yearFilter != null) {
+            yFilter = Integer.parseInt(yearFilter);
+        } else yFilter = 0;
+
+        if (genreFilter == null) {
+            if ( yFilter != year)
+                return 0;
+            return 1;
+        }
+
+        if ( yFilter == 0) {
+            for (String genre : genres)
+                if (stringToGenre(genre).equals(genreFilter))
+                    return 1;
+                return 0;
+        }
+
+        if ( yFilter == year) {
+            for (String genre : genres)
+                if (stringToGenre(genre).equals(genreFilter))
+                    return 1;
+        }
+       return 0;
+    }
+
+    public void iterateFavoriteMovie (List<User> u) {
+        for (User user : u) {
+            for (int j = 0; j < user.getFavoriteMovies().size(); j++)
+                if (user.getFavoriteMovies().get(j).equals(title))
+                    timesInFavoriteMovies++;
+        }
+    }
+
+    public void setTotalViewsMovie(List<User> u) {
+        for (User user : u) {
+            if (!user.getHistory().isEmpty()) {
+                if (user.getHistory().containsKey(title))
+                    totalViews += user.getHistory().get(title);
+            }
+        }
+    }
+
     public void sortCastAsc () {
         Collections.sort(cast);
     }
@@ -117,10 +184,8 @@ public class Movie {
         Collections.reverse(cast);
     }
 
-    @Override
-    public String toString() {
-        return "Movie{" +
-                "cast=" + cast +
-                '}';
+    public int getTotalViews() {
+        return totalViews;
     }
+
 }

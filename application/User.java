@@ -4,6 +4,7 @@ import fileio.UserInputData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class User {
@@ -18,12 +19,9 @@ public class User {
 
     private Map<String, Double> ratedMovies = new HashMap<>();
 
-    private Map<String, Double> ratedSerials = new HashMap<>();
+    private Map<String, List<Integer>> ratedSerial = new HashMap<>();
 
-    private ArrayList<String> ratedShows = new ArrayList<>();
-
-    private HashMap<String, Integer> ratedSerial = new HashMap<>();
-
+    private int activity;
 
     public User(UserInputData user) {
         this.username = user.getUsername();
@@ -44,30 +42,21 @@ public class User {
         this.ratedMovies = ratedMovies;
     }
 
-    public Map<String, Double> getRatedSerials() {
-        return ratedSerials;
-    }
-
-    public void setRatedSerials(Map<String, Double> ratedSerials) {
-        this.ratedSerials = ratedSerials;
-    }
-
-    public ArrayList<String> getRatedShows() {
-        return ratedShows;
-    }
-
-    public void setRatedShows(ArrayList<String> ratedShows) {
-        this.ratedShows = ratedShows;
-    }
-
-    public HashMap<String, Integer> getRatedSerial() {
+    public Map<String,  List<Integer>> getRatedSerial() {
         return ratedSerial;
     }
 
-    public void setRatedSerial(HashMap<String, Integer> ratedSerial) {
+    public void setRatedSerial(Map<String,  List<Integer>> ratedSerial) {
         this.ratedSerial = ratedSerial;
     }
 
+    public int getActivity() {
+        return activity;
+    }
+
+    public void increaseActivity() {
+        ++activity;
+    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -84,6 +73,9 @@ public class User {
     public Map<String, Integer> getHistory() {
         return history;
     }
+    public void addHasRatedMovie(String title, Double grade) {
+        ratedMovies.put(title, grade);
+    }
 
     public void setHistory(Map<String, Integer> history) {
         this.history = history;
@@ -97,35 +89,32 @@ public class User {
         this.favoriteMovies = favoriteMovies;
     }
 
-    public void addHasRatedMovie(String title) {
-
-        ratedShows.add(title);
-    }
-
-    public void addRatedSerial(String title, int season) {
-        ratedSerial.put(title, season);
-    }
-
     public int didRateShowS(String title, int nr) {
-        for (HashMap.Entry<String, Integer> entry: ratedSerial.entrySet()) {
-            String k = entry.getKey();
-            Integer v = entry.getValue();
-            if ((k.equals(title)) && (v == nr)) {
-                return 0;
-            }
+        if (!ratedSerial.containsKey(title)) {
+            ratedSerial.put(title, new ArrayList<>());
         }
+        else if (ratedSerial.get(title).contains(nr))
+            return 0;
+        ratedSerial.get(title).add(nr);
         return 1;
     }
 
 
     public int didRateMovie(String title) {
-        for (String s : ratedShows) {
-            if (s.equals(title)) {
+        for (Map.Entry<String, Double> s : ratedMovies.entrySet()) {
+            if (s.getKey().equals(title)) {
                 return 0;
             }
         }
         return 1;
     }
+
+//    public void setActivity () {
+//        for (Map.Entry<String, List<Integer>> s : ratedSerial.entrySet()) {
+//            activity += s.getValue().size();
+//        }
+//        activity += ratedMovies.size();
+//    }
 
     public int addFavoriteList(String title) {
         for (String favoriteMovie : favoriteMovies) {

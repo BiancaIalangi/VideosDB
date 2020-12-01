@@ -32,6 +32,9 @@ public class FavViewRating {
                 message = Constants.SUCCESS + a.getTitle() + " was added as favourite";
                 if (this.l.getByUsername(a.getUsername()).addFavoriteList(a.getTitle()) == 0)
                     this.l.getByUsername(a.getUsername()).getFavoriteMovies().add(a.getTitle());
+                if (l.getByTitleMovie(a.getTitle()) != null) {
+                    l.getByTitleMovie(a.getTitle()).increaseTimesInFavoriteMovies();
+                } else l.getByTitleSerial(a.getTitle()).increaseTimesInFavoriteSerial();
                 return message;
             }
             case "view" -> {
@@ -51,16 +54,18 @@ public class FavViewRating {
                     if (key.equals(a.getTitle())) {
                         if (a.getSeasonNumber() == 0) {
                             if (this.l.getByUsername(a.getUsername()).didRateMovie(key) == 1) {
-                                this.l.getByUsername(a.getUsername()).addHasRatedMovie(key);
+                                this.l.getByUsername(a.getUsername()).addHasRatedMovie(key, a.getGrade());
                                 l.getByTitleMovie(key).increaseDivider();
                                 l.getByTitleMovie(key).addRate(a.getGrade());
+                                l.getByUsername(a.getUsername()).increaseActivity();
                                 message = Constants.SUCCESS + a.getTitle() + " was rated with " + a.getGrade() + " by " + a.getUsername();
                             } else message = Constants.ERROR + a.getTitle() + " has been already rated";
                         } else {
-                            if (this.l.getByUsername(a.getUsername()).didRateShowS(a.getTitle(), a.getSeasonNumber()) == 1) {
-                                this.l.getByUsername(a.getUsername()).addRatedSerial(a.getTitle(), a.getSeasonNumber());
+                            if (l.getByUsername(a.getUsername()).didRateShowS(a.getTitle(), a.getSeasonNumber()) == 1) {
                                 l.getByTitleSerial(a.getTitle()).addRatedSeasons(a.getUsername(), a.getGrade());
+                                l.getByUsername(a.getUsername()).increaseActivity();
                                 message = Constants.SUCCESS + a.getTitle() + " was rated with " + a.getGrade() + " by " + a.getUsername();
+                                return message;
                             } else message = Constants.ERROR + a.getTitle() + " has been already rated";
                         }
                     }

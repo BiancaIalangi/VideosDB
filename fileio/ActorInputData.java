@@ -5,6 +5,8 @@ import actor.ActorsAwards;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static utils.Utils.stringToAwards;
+
 /**
  * Information about an actor, retrieved from parsing the input test files
  * <p>
@@ -64,14 +66,6 @@ public final class ActorInputData {
     public void setCareerDescription(final String careerDescription) {
         this.careerDescription = careerDescription;
     }
-    //@Override
-//    public String toString() {
-//        return "ActorInputData{"
-//                + "name='" + name + '\''
-//                + ", careerDescription='"
-//                + careerDescription + '\''
-//                + ", filmography=" + filmography + '}';
-//    }
 
     @Override
     public String toString() {

@@ -1,14 +1,12 @@
 package lists;
 
-import application.Actor;
-import application.Movie;
-import application.Serial;
-import application.User;
-import fileio.MovieInputData;
-import fileio.SerialInputData;
-import fileio.UserInputData;
+import application.*;
+import comparator.*;
+import entertainment.Genre;
+import fileio.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -17,11 +15,13 @@ public class Lists {
     private List<User> userList;
     private List<Serial> serialList;
     private List<Movie> movieList;
+    private List<ActorInfo> actorsInfoList;
 
     public Lists() {
         this.userList = new ArrayList<>();
         this.serialList = new ArrayList<>();
         this.movieList = new ArrayList<>();
+        this.actorsInfoList = new ArrayList<>();
     }
 
     public void makeUsers (List<UserInputData> u) {
@@ -40,6 +40,13 @@ public class Lists {
         for (MovieInputData movieInputData : m) {
             Movie mov = new Movie(movieInputData);
             movieList.add(mov);
+        }
+    }
+
+    public void makeActorsInfo (List<ActorInputData> a) {
+        for (ActorInputData actorInputData : a) {
+            ActorInfo act = new ActorInfo(actorInputData);
+            actorsInfoList.add(act);
         }
     }
 
@@ -199,11 +206,225 @@ public class Lists {
         return a;
     }
 
-    @Override
-    public String toString() {
-        return "Lists{" +
-                "movieList=" + movieList +
-                '}';
+    public ArrayList<Awards> queryAwards (List<String> awards) {
+        ArrayList<Awards> list = new ArrayList<>();
+        for (ActorInfo actor : actorsInfoList) {
+            int s;
+            if (actor.getAwards().size() < awards.size())
+                continue;
+            else if (actor.containAwards(awards) == 0) {
+                continue;
+            } else {
+                s = actor.numberOfAwards();
+                Awards a = new Awards(actor.getName(), s);
+                list.add(a);
+            }
+        }
+        return list;
     }
+
+    public ArrayList<String> ratingMovies (int n, String year, Genre genre, String type) {
+        generalRatingAsc();
+        movieList.sort(new MovieRatingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(movieList);
+        ArrayList<String> ratingMovieList = new ArrayList<>();
+        for (Movie m : movieList) {
+            if (m.checkFiltersMovie(year, genre) == 1)
+                if (m.getGeneralRatingMovie() != 0)
+                    ratingMovieList.add(m.getTitle());
+        }
+
+        while (ratingMovieList.size() > n)
+            ratingMovieList.remove(ratingMovieList.size() - 1);
+
+        return ratingMovieList;
+    }
+
+    public ArrayList<String> ratingSerial (int n, String year, Genre genre, String type) {
+        generalRatingAsc();
+        serialList.sort(new SerialRatingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(serialList);
+        ArrayList<String> ratingSerialList = new ArrayList<>();
+        for (Serial s : serialList) {
+            if (s.checkFiltersSerial(year, genre) == 1)
+                if (s.getGeneralRatingSerial() != 0)
+                    ratingSerialList.add(s.getTitle());
+        }
+
+        while (ratingSerialList.size() > n)
+            ratingSerialList.remove(ratingSerialList.size() - 1);
+
+        return ratingSerialList;
+    }
+
+    public ArrayList<String> favoriteMovies (int n, String year, Genre genre, String type) {
+        generalRatingAsc();
+        ArrayList<String> favoriteMovieList = new ArrayList<>();
+        for (Movie m : movieList) {
+            m.iterateFavoriteMovie(userList);
+        }
+        movieList.sort(new MovieFavSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(movieList);
+
+        for (Movie m : movieList) {
+            if (m.checkFiltersMovie(year, genre) == 1)
+                if (m.getTimesInFavoriteMovies() != 0)
+                    favoriteMovieList.add(m.getTitle());
+        }
+
+        while (favoriteMovieList.size() > n)
+            favoriteMovieList.remove(favoriteMovieList.size() - 1);
+
+        return favoriteMovieList;
+    }
+
+    public ArrayList<String> favoriteSerial (int n, String year, Genre genre, String type) {
+        generalRatingAsc();
+        ArrayList<String> favoriteSerialList = new ArrayList<>();
+        for (Serial s : serialList) {
+            s.iterateFavoriteSerial(userList);
+        }
+        serialList.sort(new SerialFavSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(serialList);
+
+        for (Serial s : serialList) {
+            if (s.checkFiltersSerial(year, genre) == 1)
+                if (s.getTimesInFavoriteSerial() != 0)
+                    favoriteSerialList.add(s.getTitle());
+        }
+
+        while (favoriteSerialList.size() > n)
+            favoriteSerialList.remove(favoriteSerialList.size() - 1);
+
+        return favoriteSerialList;
+    }
+
+    public ArrayList<String> longestMovies (int n, String year, Genre genre, String type) {
+        ArrayList<String> longestMovieList = new ArrayList<>();
+        movieList.sort(new MovieLongSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(movieList);
+
+        for (Movie m : movieList) {
+            if (m.checkFiltersMovie(year, genre) == 1)
+                longestMovieList.add(m.getTitle());
+        }
+
+        while (longestMovieList.size() > n)
+            longestMovieList.remove(longestMovieList.size() - 1);
+        return longestMovieList;
+    }
+
+    public ArrayList<String> longestSerial (int n, String year, Genre genre, String type) {
+        ArrayList<String> longestSerialList = new ArrayList<>();
+        for (Serial s : serialList) {
+            s.setDurationSerial();
+        }
+        serialList.sort(new SerialLongSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(serialList);
+
+        for (Serial s : serialList) {
+            if (s.checkFiltersSerial(year, genre) == 1)
+                longestSerialList.add(s.getTitle());
+        }
+
+        while (longestSerialList.size() > n)
+            longestSerialList.remove(longestSerialList.size() - 1);
+
+        return longestSerialList;
+    }
+
+    public ArrayList<String> mostViewedMovies (int n, String year, Genre genre, String type) {
+        ArrayList<String> mostViewedMovieList = new ArrayList<>();
+        for (Movie m : movieList) {
+            m.setTotalViewsMovie(userList);
+        }
+
+        movieList.sort(new MovieViewsSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(movieList);
+
+        for (Movie m : movieList) {
+            if (m.checkFiltersMovie(year, genre) == 1)
+                if (m.getTotalViews() != 0)
+                    mostViewedMovieList.add(m.getTitle());
+        }
+
+        while (mostViewedMovieList.size() > n)
+            mostViewedMovieList.remove(mostViewedMovieList.size() - 1);
+        return mostViewedMovieList;
+    }
+
+    public ArrayList<String> mostViewedSerial (int n, String year, Genre genre, String type) {
+        ArrayList<String>mostViewedSerialList = new ArrayList<>();
+        for (Serial s : serialList) {
+            s.setTotalViewsSerial(userList);
+        }
+
+        serialList.sort(new SerialViewsSortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(serialList);
+
+        for (Serial s : serialList) {
+            if (s.checkFiltersSerial(year, genre) == 1)
+                if (s.getTotalViews() != 0)
+                    mostViewedSerialList.add(s.getTitle());
+        }
+
+        while (mostViewedSerialList.size() > n)
+            mostViewedSerialList.remove(mostViewedSerialList.size() - 1);
+
+        return mostViewedSerialList;
+    }
+
+    public ArrayList<String> activity (int n, String type, List<ActionInputData> act) {
+        ArrayList<String> activUser = new ArrayList<>();
+//        for (User u : userList) {
+//            System.out.println(u.getUsername() + " " + u.getActivity());
+//        }
+        userList.sort(new ActivitySortingComparator());
+        if (type.equals("desc"))
+            Collections.reverse(userList);
+
+        for (User u : userList) {
+            if (u.getActivity() != 0) {
+                activUser.add(u.getUsername());
+            }
+        }
+
+        while (activUser.size() > n)
+            activUser.remove( activUser.size() - 1);
+
+        return activUser;
+    }
+
+    public ArrayList<String> doFilterDescription (List<String> words) {
+        ArrayList<String> filter = new ArrayList<>();
+
+        actorsInfoList.sort(new ActorInfoSortingComparator());
+
+        for (ActorInfo a : actorsInfoList) {
+            int verify = 0;
+            a.getCareerDescription().toLowerCase();
+            String[] description = a.getCareerDescription().split("\\W", -2);
+            for (String w : words)
+                for (String s : description) {
+                    if (w.equals(s)){
+                        verify++;
+                        break;
+                    }
+                }
+            if (verify == words.size()) {
+                filter.add(a.getName());
+            }
+        }
+        return filter;
+    }
+
 }
 
