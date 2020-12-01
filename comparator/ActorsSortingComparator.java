@@ -9,10 +9,10 @@ public class ActorsSortingComparator implements Comparator<Actor> {
     @Override
     public int compare(Actor o1, Actor o2) {
         int RatingCompare = Double.compare(o1.getRating(), o2.getRating());
-        int TitleCompare = o1.getTitle().compareTo(o2.getTitle());
+        int NameCompare = o1.getName().compareTo(o2.getName());
 
         if (RatingCompare == 0) {
-            return ((TitleCompare == 0) ? RatingCompare : TitleCompare);
+            return ((NameCompare == 0) ? RatingCompare : NameCompare);
         } else {
             return RatingCompare;
         }

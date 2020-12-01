@@ -6,6 +6,7 @@ import entertainment.Genre;
 import fileio.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -124,85 +125,62 @@ public class Lists {
 
     }
 
+    public int existActor (ArrayList<Actor> a, String name) {
+        int pos = -1;
+        for (int i = 0; i < a.size(); i++) {
+            if (a.get(i).getName().equals(name))
+                pos = i;
+        }
+        return pos;
+    }
+
     public ArrayList<Actor> ordRating() {
         ArrayList<Actor> actorList = new ArrayList<>();
         for (Serial serial : serialList) {
-            double rating = serial.getGeneralRatingSerial();
-            String title = serial.getTitle();
-            if (rating != 0) {
-                Actor a = new Actor(title, rating);
-                actorList.add(a);
+            for (int i = 0; i < serial.getCast().size(); i++) {
+                if (serial.getGeneralRatingSerial() != 0) {
+                    if (existActor(actorList, serial.getCast().get(i)) != -1) {
+                        actorList.get(existActor(actorList, serial.getCast().get(i))).incrementTimesin();
+                        actorList.get(existActor(actorList, serial.getCast().get(i))).setRating(serial.getGeneralRatingSerial());
+                    } else {
+                        Actor a = new Actor(serial.getGeneralRatingSerial(), serial.getCast().get(i));
+                        actorList.add(a);
+                    }
+                }
             }
         }
 
-        for (Movie movie : movieList) {
-            double rating = movie.getGeneralRatingMovie();
-            String title = movie.getTitle();
-            if (rating != 0) {
-                Actor a = new Actor(title, rating);
-                actorList.add(a);
+        for (Movie m : movieList) {
+            for (int i = 0; i < m.getCast().size(); i++) {
+                if (m.getGeneralRatingMovie() != 0) {
+                    if (existActor(actorList, m.getCast().get(i)) != -1) {
+                        actorList.get(existActor(actorList, m.getCast().get(i))).incrementTimesin();
+                        actorList.get(existActor(actorList, m.getCast().get(i))).setRating(m.getGeneralRatingMovie());
+                    } else {
+                        Actor a = new Actor(m.getGeneralRatingMovie(), m.getCast().get(i));
+                        actorList.add(a);
+                    }
+                }
             }
+        }
+
+        for (Actor actor : actorList) {
+            actor.finalRating();
         }
         return actorList;
     }
 
-    public int getAllCast(ArrayList<Actor> a) {
-        int sum = 0;
-        for (Actor actor : a) {
-            String title = actor.getTitle();
-            Serial s = getByTitleSerial(title);
-            if (s != null) {
-                sum += s.getCast().size();
-            } else {
-                Movie m = getByTitleMovie(title);
-                sum += m.getCast().size();
-            }
-        }
-        return sum;
-    }
 
     public ArrayList<String> actorsAverage(ArrayList<Actor> actorList, int n) {
-        int sum = getAllCast(actorList);
         ArrayList<String> a = new ArrayList<>();
-        if (n >= sum) {
-            for (Actor actor : actorList) {
-                String title = actor.getTitle();
-                Serial s = getByTitleSerial(title);
-                if (s != null) {
-                    a.addAll(s.getCast());
-                } else {
-                    Movie m = getByTitleMovie(title);
-                    a.addAll(m.getCast());
-                }
-            }
-            return a;
-        }
+
         for (Actor actor : actorList) {
-            if (n <= 0) {
-                break;
-            }
-            String title = actor.getTitle();
-            Serial s = getByTitleSerial(title);         // find title in series
-            if (s != null) {
-                if (s.getCast().size() >= n) {
-                    for (int j = 0; j < n; j++) {
-                        a.add(s.getCast().get(j));
-                    }
-                } else {
-                    a.addAll(s.getCast());
-                }
-            } else {
-                Movie m = getByTitleMovie(title);
-                if (m.getCast().size() >= n) {
-                    for (int j = 0; j < n; j++) {
-                        a.add(m.getCast().get(j));
-                    }
-                } else {
-                    a.addAll(m.getCast());
-                }
-            }
-            n = n - a.size();
+            a.add(actor.getName());
         }
+
+        while (a.size() > n)
+            a.remove(a.size() - 1);
+
         return a;
     }
 
@@ -384,9 +362,7 @@ public class Lists {
 
     public ArrayList<String> activity (int n, String type, List<ActionInputData> act) {
         ArrayList<String> activUser = new ArrayList<>();
-//        for (User u : userList) {
-//            System.out.println(u.getUsername() + " " + u.getActivity());
-//        }
+
         userList.sort(new ActivitySortingComparator());
         if (type.equals("desc"))
             Collections.reverse(userList);
@@ -403,28 +379,31 @@ public class Lists {
         return activUser;
     }
 
-    public ArrayList<String> doFilterDescription (List<String> words) {
+    public boolean verifyDescription (List<String> words, List<String> description) {
+        for (int i = 0; i < words.size(); i++) {
+            if (!description.contains(words.get(i)))
+                return false;
+        }
+        return true;
+    }
+
+
+    public ArrayList<String> doFilterDescription (List<String> words, String type) {
         ArrayList<String> filter = new ArrayList<>();
 
         actorsInfoList.sort(new ActorInfoSortingComparator());
+        if (type != null && type.equals("desc"))
+            Collections.reverse(actorsInfoList);
+
 
         for (ActorInfo a : actorsInfoList) {
-            int verify = 0;
-            a.getCareerDescription().toLowerCase();
-            String[] description = a.getCareerDescription().split("\\W", -2);
-            for (String w : words)
-                for (String s : description) {
-                    if (w.equals(s)){
-                        verify++;
-                        break;
-                    }
-                }
-            if (verify == words.size()) {
+            String[] description = a.getCareerDescription().toLowerCase().split("\\W", -2);
+            List<String> text = new ArrayList<>(Arrays.asList(description));
+            if (verifyDescription(words, text)) {
                 filter.add(a.getName());
             }
         }
         return filter;
     }
-
 }
 

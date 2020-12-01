@@ -116,7 +116,8 @@ public class Recommendation extends Lists{
 
 
     public String favCommend (String name) {
-        addShow();
+
+        generateTimesInFavorite();
         List<Show> byFav = new ArrayList<>(titleShow);
 
         String message = null;
@@ -125,10 +126,11 @@ public class Recommendation extends Lists{
         if (!u.getSubscriptionType().equals("PREMIUM"))
             return null;
 
+        Comparator<Show> comparator1 = Comparator.comparing(Show::getPosition);
+        byFav.sort(comparator1);
         Comparator<Show> comparator = Comparator.comparing(Show::getTimesInFavorite);
-        byFav.sort(comparator);
-        comparator = comparator.thenComparing(Show::getPosition);
-        Stream<Show> generate = byFav.stream().sorted(comparator);
+        byFav.sort(comparator.reversed());
+
 
         for (Show r : byFav) {
             if (!u.getHistory().containsKey(r.getTitle())) {

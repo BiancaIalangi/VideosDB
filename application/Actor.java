@@ -1,38 +1,47 @@
 package application;
 
-
-import java.util.ArrayList;
-
 public class Actor {
+
     private String title;
+    private String name;
     private double rating;
+    private int timesin;
 
-    public Actor (String title, double rating) {
-        this.title = title;
+    public Actor (double rating, String name) {
+        this.name = name;
         this.rating = rating;
+        timesin = 1;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTimesin(int timesin) {
+        this.timesin = timesin;
     }
 
     public double getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    public void setRating(double addRating) {
+        rating += addRating;
     }
 
-    @Override
-    public String toString() {
-        return "Actor{" +
-                "title='" + title + '\'' +
-                ", rating=" + rating +
-                '}';
+    public void finalRating() {
+        rating = rating/timesin;
+    }
+
+    public int getTimesin() {
+        return timesin;
+    }
+
+    public void incrementTimesin() {
+        timesin++;
     }
 }

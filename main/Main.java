@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static utils.Utils.stringToGenre;
 
@@ -278,7 +275,7 @@ public final class Main {
                     }
                     case "filter_description" -> {
                         ArrayList<String> filter;
-                        filter = l.doFilterDescription(action.getFilters().get(2));
+                        filter = l.doFilterDescription(action.getFilters().get(2), action.getSortType());
                         message = new StringBuilder();
                         if (filter.isEmpty()) {
                             message.append("Query result: []");

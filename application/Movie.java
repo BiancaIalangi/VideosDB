@@ -119,6 +119,8 @@ public class Movie {
         this.sumRatingsMovie += d;
     }
 
+
+
     public void generalRating () {
         if (this.divider == 0)
             generalRatingMovie = 0;
