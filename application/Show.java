@@ -3,19 +3,28 @@ package application;
 import java.util.ArrayList;
 
 public class Show {
-    private String title;
+    private final String title;
 
-    private ArrayList<String> genre;
+    private final ArrayList<String> genre;
 
-    private double rating;
+    private final double rating;
 
-    private int views;
+    private final int views;
 
-    private int position;
+    private final int position;
 
     private int timesInFavorite;
 
-    public Show (String title, ArrayList<String> genre, double rating, int views, int position) {
+    /**
+     * setter of a list with all movies and shows
+     * @param title title of movie or serial
+     * @param genre genre of movie or serial
+     * @param rating general rating
+     * @param views total views from user
+     * @param position number of appearance in database
+     */
+    public Show(final String title, final ArrayList<String> genre,
+                 final double rating, final int views, final int position) {
         this.title = title;
         this.genre = genre;
         this.rating = rating;
@@ -23,50 +32,58 @@ public class Show {
         this.position = position;
     }
 
+    /**
+     * getter
+     * @return position in database of this show
+     */
     public int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
+    /**
+     * getter
+     * @return show title
+     */
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    /**
+     * getter
+     * @return genres of this show
+     */
     public ArrayList<String> getGenre() {
         return genre;
     }
 
-    public void setGenre(ArrayList<String> genre) {
-        this.genre = genre;
-    }
-
+    /**
+     * getter
+     * @return total views from all users to this show
+     */
     public int getViews() {
         return views;
     }
 
-    public void setViews(int views) {
-        this.views = views;
-    }
-
+    /**
+     * getter
+     * @return average rating to this show
+     */
     public double getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
+    /**
+     * getter
+     * @return at how many users appear in FavoriteList
+     */
     public int getTimesInFavorite() {
         return timesInFavorite;
     }
 
+    /**
+     * every time a user put this show in their FavoriteList
+     * this number increase
+     */
     public void increaseTimesInFavorite() {
         ++timesInFavorite;
     }

@@ -12,24 +12,22 @@ import java.util.List;
 import static utils.Utils.stringToGenre;
 
 public class Serial {
-    private String title;
 
-    private int numberOfSeasons;
+    private final String title;
 
-    private ArrayList<Season> seasons;
+    private final int numberOfSeasons;
 
-    private int currentSeason;
+    private final ArrayList<Season> seasons;
 
     private int durationSerial;
 
-    private int year;
+    private final int year;
 
-    private ArrayList<String> cast;
+    private final ArrayList<String> cast;
 
-    private ArrayList<String> genres;
+    private final ArrayList<String> genres;
 
-    private HashMap<String, Double> ratedSeasons= new HashMap<>();
-
+    private final HashMap<String, Double> ratedSeasons = new HashMap<>();
 
     private double generalRatingSerial;
 
@@ -39,8 +37,11 @@ public class Serial {
 
     private int totalViews;
 
-
-    public Serial(SerialInputData serialInputData) {
+    /**
+     * setter of movie entity (a copy of SerialInputData)
+     * @param serialInputData to be copied
+     */
+    public Serial(final SerialInputData serialInputData) {
         this.title = serialInputData.getTitle();
         this.numberOfSeasons =  serialInputData.getNumberSeason();
         this.seasons = serialInputData.getSeasons();
@@ -49,181 +50,215 @@ public class Serial {
         this.genres = serialInputData.getGenres();
     }
 
+    /**
+     * getter of getTimesInFavoriteSerial
+     * @return in how many Users' FavoriteList appears
+     */
     public int getTimesInFavoriteSerial() {
         return timesInFavoriteSerial;
     }
 
+    /**
+     * increase every time a user put this serial in his FavoriteList
+     */
     public void increaseTimesInFavoriteSerial() {
         timesInFavoriteSerial++;
     }
 
+    /**
+     * getter
+     * @return serial's title
+     */
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getNumberOfSeasons() {
-        return numberOfSeasons;
-    }
-
-    public void setNumberOfSeasons(int numberOfSeasons) {
-        this.numberOfSeasons = numberOfSeasons;
-    }
-
+    /**
+     * getter
+     * @return information about all seasons
+     */
     public ArrayList<Season> getSeasons() {
         return seasons;
     }
 
-    public void setSeasons(ArrayList<Season> seasons) {
-        this.seasons = seasons;
-    }
-
-    public int getCurrentSeason() {
-        return currentSeason;
-    }
-
-    public void setCurrentSeason(int currentSeason) {
-        this.currentSeason = currentSeason;
-    }
-
-    public double getSumRatings() {
-        return sumRatings;
-    }
-
-    public void setSumRatings(double sumRatings) {
-        this.sumRatings = sumRatings;
-    }
-
+    /**
+     * getter of general rating of this serial
+     * @return average of user's rating to this serial
+     */
     public double getGeneralRatingSerial() {
         return generalRatingSerial;
     }
 
-    public void setGeneralRatingSerial(double generalRatingSerial) {
-        this.generalRatingSerial = generalRatingSerial;
-    }
-
+    /**
+     * getter
+     * @return movie's year
+     */
     public int getYear() {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
-
+    /**
+     * getter
+     * @return show's cast distribution
+     */
     public ArrayList<String> getCast() {
         return cast;
     }
 
-    public void setCast(ArrayList<String> cast) {
-        this.cast = cast;
-    }
-
+    /**
+     * getter
+     * @return genres of serial
+     */
     public ArrayList<String> getGenres() {
         return genres;
     }
 
-    public void setGenres(ArrayList<String> genres) {
-        this.genres = genres;
+    /**
+     * sort cast alphabetically from a to z
+     */
+    public void sortCastAsc() {
+        Collections.sort(cast);
     }
 
-    public HashMap<String, Double> getRatedSeasons() {
-        return ratedSeasons;
+    /**
+     * duration of all serial
+     * @return how long is this serial(all seasons)
+     */
+    public int getDurationSerial() {
+        return durationSerial;
     }
 
-    public void setRatedSeasons(HashMap<String, Double> ratedSeasons) {
-        this.ratedSeasons = ratedSeasons;
+    /**
+     * sort cast alphabetically from z to a
+     */
+    public void sortCastDesc() {
+        Collections.reverse(cast);
     }
 
-    public void addRatedSeasons (String name, Double rate) {
+    /**
+     * getter
+     * @return total views at this serial from all users
+     */
+    public int getTotalViews() {
+        return totalViews;
+    }
+
+    /**
+     * in help to calculate the GeneralRatingSerial
+     * @param name user's name
+     * @param rate the grade gave by user
+     */
+    public void addRatedSeasons(final String name, final Double rate) {
         ratedSeasons.put(name, rate);
         sumRatings += rate;
     }
 
-    public void generalRating () {
+    /**
+     * check if a user from the database rated the same season
+     * in the past, if he didn't rate => sum this rating
+     * at the end, calculate the generalRatingSerial
+     */
+    public void generalRating() {
         ArrayList<String> users = new ArrayList<>();
-        for (HashMap.Entry<String, Double> entry : ratedSeasons.entrySet()){
+        for (HashMap.Entry<String, Double> entry : ratedSeasons.entrySet()) {
             String key = entry.getKey();
             if (!users.equals(key)) {
                 users.add(key);
             }
         }
-        if (users.size() == 0)
+        if (users.size() == 0) {
             generalRatingSerial = 0;
-        else generalRatingSerial = sumRatings/(users.size() * numberOfSeasons);
+        } else {
+            generalRatingSerial = sumRatings / (users.size() * numberOfSeasons);
+        }
     }
 
-    public int checkFiltersSerial (String yearFilter, Genre genreFilter) {
-        if (genres == null && genreFilter != null)
+    /**
+     * check if the serial has the filters wanted from user
+     * if yearFilter and genreFilter are null => there is no filter
+     * @param yearFilter the year filter put by user
+     * @param genreFilter genre type put by user
+     * @return if the serial has this filters or not
+     */
+    public int checkFiltersSerial(final String yearFilter, final Genre genreFilter) {
+
+        if (genres == null && genreFilter != null) {
             return 0;
+        }
 
         if (genreFilter == null && yearFilter == null) {
             return 1;
         }
 
         int yFilter;
+
         if (yearFilter != null) {
             yFilter = Integer.parseInt(yearFilter);
-        } else yFilter = 0;
+        } else {
+            yFilter = 0;
+        }
 
         if (genreFilter == null) {
-            if ( yFilter != year)
+            if (yFilter != year) {
                 return 0;
-            else  return 1;
+            } else {
+                return 1;
+            }
         }
 
         if (yFilter == 0) {
-            for (String genre : genres)
-                if (stringToGenre(genre).equals(genreFilter))
+            for (String genre : genres) {
+                if (stringToGenre(genre).equals(genreFilter)) {
                     return 1;
-                return 0;
+                }
+            }
+            return 0;
         }
 
         if (yFilter == year) {
-            for (String genre : genres)
-                if (stringToGenre(genre).equals(genreFilter))
+            for (String genre : genres) {
+                if (stringToGenre(genre).equals(genreFilter)) {
                     return 1;
+                }
+            }
         }
         return 0;
     }
 
-    public void iterateFavoriteSerial (List<User> u) {
-        for (int i = 0 ; i < u.size(); i++) {
-            for (int j = 0; j < u.get(i).getFavoriteMovies().size(); j++)
-                if ( u.get(i).getFavoriteMovies().get(j).equals(title))
-                    timesInFavoriteSerial++;
-        }
-    }
-    public void setDurationSerial () {
-        for (int i = 0; i < seasons.size(); i++){
-            durationSerial += seasons.get(i).getDuration();
-        }
-    }
-
-    public void setTotalViewsSerial(List<User> u) {
+    /**
+     * calculate in how many FavoriteList this serial appear
+     * @param u a list of all users with their information
+     */
+    public void iterateFavoriteSerial(final List<User> u) {
         for (User user : u) {
-            if (!user.getHistory().isEmpty()) {
-                if (user.getHistory().containsKey(title))
-                    totalViews += user.getHistory().get(title);
+            for (int j = 0; j < user.getFavoriteMovies().size(); j++) {
+                if (user.getFavoriteMovies().get(j).equals(title)) {
+                    timesInFavoriteSerial++;
+                }
             }
         }
     }
 
-    public void sortCastAsc () {
-        Collections.sort(cast);
+    /**
+     * the duration of the serial
+     */
+    public void setDurationSerial() {
+        for (Season season : seasons) {
+            durationSerial += season.getDuration();
+        }
     }
 
-    public int getDurationSerial() {
-        return durationSerial;
-    }
-
-    public void sortCastDesc () {
-        Collections.reverse(cast);
-    }
-
-    public int getTotalViews() {
-        return totalViews;
+    /**
+     * calculate how many views this serial has from all users
+     * @param u a list of all users with their information
+     */
+    public void setTotalViewsSerial(final List<User> u) {
+        for (User user : u) {
+            if (!user.getHistory().isEmpty()) {
+                if (user.getHistory().containsKey(title)) {
+                    totalViews += user.getHistory().get(title);
+                }
+            }
+        }
     }
 }

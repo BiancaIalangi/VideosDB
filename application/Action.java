@@ -3,7 +3,6 @@ package application;
 import fileio.ActionInputData;
 import fileio.UserInputData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Action {
@@ -14,150 +13,77 @@ public class Action {
 
     private String username;
 
-    private String objectType;
-
-    private String sortType;
-
-    private String criteria;
-
-    private String title;
-
-    private String genre;
-
-    private int number;
-
     private double grade;
 
     private int seasonNumber;
 
-    private List<List<String>> filters = new ArrayList<>();
+    /**
+     * setter for action entity (a copy from ActionInputData)
+     * @param action to be copied
+     */
+    public Action(final ActionInputData action) {
+        this.actionType = action.getActionType();
+        this.type = action.getType();
+        this.username = action.getUsername();
+        this.grade = action.getGrade();
+        this.seasonNumber = action.getSeasonNumber();
+    }
 
-    public Action (String username) {
+    /**
+     * setter for username
+     * @param username to be set
+     */
+    public Action(final String username) {
         this.username = username;
     }
 
-    public Action (String username, double grade, int seasonNumber) {
+    /**
+     * setter for grade and seasonNumber
+     * @param grade to be set
+     * @param seasonNumber to be set
+     */
+    public Action(final double grade, final int seasonNumber) {
         this.grade = grade;
         this.seasonNumber = seasonNumber;
     }
 
-    public Action(ActionInputData action) {
-        this.actionType = action.getActionType();
-        this.type = action.getType();
-        this.username = action.getUsername();
-        this.objectType = action.getObjectType();
-        this.sortType = action.getSortType();
-        this.criteria = action.getCriteria();
-        this.title = action.getTitle();
-        this.genre = action.getGenre();
-        this.number = action.getNumber();
-        this.grade = action.getGrade();
-        this.seasonNumber = action.getSeasonNumber();
-        this.filters = action.getFilters();
-    }
-
-    public int findUser(List<UserInputData> action) {
+    /**
+     * find certain user
+     * @param action list of User (a copy from UserInputData)
+     * @return position of user needed
+     */
+    public int findUser(final List<UserInputData> action) {
         for (int i = 0; i < action.size(); i++) {
-            if (this.getUsername().equals(action.get(i).getUsername()))
+            if (this.getUsername().equals(action.get(i).getUsername())) {
                 return i;
+            }
         }
         return 0;
     }
 
+    /**
+     * getter for actionType
+     * @return actionType
+     */
     public String getActionType() {
         return actionType;
     }
 
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
-    }
 
+    /**
+     * getter for commands
+     * @return command type
+     */
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
+    /**
+     * getter for username
+     * @return name of user
+     */
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getObjectType() {
-        return objectType;
-    }
-
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
-    }
-
-    public String getSortType() {
-        return sortType;
-    }
-
-    public void setSortType(String sortType) {
-        this.sortType = sortType;
-    }
-
-    public String getCriteria() {
-        return criteria;
-    }
-
-    public void setCriteria(String criteria) {
-        this.criteria = criteria;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public double getGrade() {
-        return grade;
-    }
-
-    public void setGrade(double grade) {
-        this.grade = grade;
-    }
-
-    public int getSeasonNumber() {
-        return seasonNumber;
-    }
-
-    public void setSeasonNumber(int seasonNumber) {
-        this.seasonNumber = seasonNumber;
-    }
-
-    public List<List<String>> getFilters() {
-        return filters;
-    }
-
-    public void setFilters(List<List<String>> filters) {
-        this.filters = filters;
     }
 
 }
